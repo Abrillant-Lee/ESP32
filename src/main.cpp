@@ -1,3 +1,10 @@
+/**
+* @file    main.cpp
+* @brief   ESP32通过MQTT协议接入华为云IoT平台，上报温度数据
+* @author  Abrillant Lee
+* @date    2023.5.19
+* @version v1.0
+*/
 #include <Wire.h>
 #include <WiFi.h>
 #include <PubSubClient.h>
