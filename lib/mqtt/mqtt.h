@@ -5,6 +5,7 @@
 #include <ArduinoJson.h>
 
 #include "led.h"
+#include "bsp_servo.h"
 
 
 void callback(char *topic, byte *payload, unsigned int length);

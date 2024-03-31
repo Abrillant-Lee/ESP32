@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "servo.h": "c",
+        "esp32servo.h": "c",
+        "bsp_servo.h": "c",
+        "arduino.h": "c"
+    }
+}

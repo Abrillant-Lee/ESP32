@@ -2,22 +2,25 @@
 
 /*MQTT连接配置*/
 /*-----------------------------------------------------*/
-const char *ssid = "nan";                                                           // 接入wifi的名字
-const char *password = "20021113";                                                  // 接入wifi的密码
-const char *mqttServer = "c1c04ba975.st1.iotda-device.cn-east-3.myhuaweicloud.com"; // 在华为云IoT的 总览->接入信息->MQTT（1883）后面的网址，这个是华为云的地址
+const char *ssid = "nan";                                                            // 接入wifi的名字
+const char *password = "20021113";                                                   // 接入wifi的密码
+const char *mqttServer = "92e10cb0f7.st1.iotda-device.cn-north-4.myhuaweicloud.com"; // 在华为云IoT的 总览->接入信息->MQTT（1883）后面的网址，这个是华为云的地址
 const int mqttPort = 1883;
 // 以下3个参数可以由HMACSHA256算法生成，为硬件通过MQTT协议接入华为云IoT平台的鉴权依据
-const char *clientId = "65fa3bafeec4311d4cd56df0_0001_0_0_2024032001";
-const char *mqttUser = "65fa3bafeec4311d4cd56df0_0001";
-const char *mqttPassword = "9d7569e907d0274d44899ae336506e8d9316865b614496ceb031010d065f318a";
+const char *clientId = "6609494b71d845632a033b20_0331_0_0_2024033111";
+const char *mqttUser = "6609494b71d845632a033b20_0331";
+const char *mqttPassword = "8c03c225082feea540f65591dfbbad4cdeed779cca02ac072e3547098358fca7";
 
 WiFiClient espClient; // ESP32WiFi模型定义
 PubSubClient client(espClient);
 
 // 华为云IoT的产品->查看->Topic管理->设备上报属性数据的 $oc/devices/{你的设备ID}/sys/properties/report
-const char *topic_properties_report = "$oc/devices/{65fa3bafeec4311d4cd56df0_0001}/sys/properties/report";
+const char *topic_properties_report = "$oc/devices/{6609494b71d845632a033b20_0331}/sys/properties/report";
 
 /*-----------------------------------------------------*/
+
+extern Servo myservo; // 创建舵机对象
+extern int pos; // 舵机位置变量
 
 void MQTT_Init()
 {
@@ -143,11 +146,20 @@ void callback(char *topic, byte *payload, unsigned int length)
     if (strcmp(command_name, "led_ctr") == 0)
     {
         Led led(48);
+        servo_setup(47);
+
         JsonObject paras = doc["paras"].as<JsonObject>(); // 获取"paras"字段
         int value = paras["value"];                       // 从"paras"字段中获取"value"字段，将其解析为一个整数
         if (value)
+        {
             led.on();
+            myservo.write(180); // 告诉舵机去到pos位置
+        }
+
         else
+        {
             led.off();
+            myservo.write(10); // 0的话舵机内部会有问题
+        }
     }
 }
