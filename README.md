@@ -1,9 +1,10 @@
-<h1 align="center" >物联网-ESP32🎉</h1>
+<h1 align="center" >物联网-ESP32</h1>
 
 <div align="center">
   <p>
     <strong>本仓库是个人对ESP32-S3的开发经验总结，希望对你有所帮助</strong><br>
 
+[ESP32-S3官方文档](https://docs.espressif.com/projects/esp-idf/zh_CN/latest/esp32s3/hw-reference/esp32s3/user-guide-devkitc-1.html#)
 
   </p>
 </div>
@@ -11,8 +12,12 @@
 
 ## 开发环境
 
-- 平台: VSCode
-- 插件: PlatformIO IDE
+- [编辑器: VSCode](https://code.visualstudio.com/)
+- [插件: PlatformIO IDE](https://marketplace.visualstudio.com/items?itemName=platformio.platformio-ide)
+- 开发板：ESP32-S3-DevKitC-1(仓库pio工程所使用)、其他系列ESP32开发板均可
+
+    <img src="https://docs.espressif.com/projects/esp-idf/zh_CN/latest/esp32s3/_images/ESP32-S3_DevKitC-1_pinlayout_v1.1.jpg" width="400">
+
 
 ## 如何开始
 
