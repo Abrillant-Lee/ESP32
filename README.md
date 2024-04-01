@@ -16,12 +16,13 @@
 
 ## 如何开始
 
-首先，你需要安装VSCode和PlatformIO IDE插件。然后，克隆这个仓库到你的本地机器上。
+1. 安装VSCode和PlatformIO IDE插件。
+2. 克隆这个仓库到本机。
 
 ```bash
 git clone https://github.com/yourusername/yourrepository.git
 ``` 
-打开VSCode，然后打开克隆的项目文件夹。你可以开始编写代码了
+3. 打开VSCode，然后打开克隆的项目文件夹。你可以开始编写代码了
 
 
 ## 项目结构
