@@ -25,19 +25,18 @@ git clone https://github.com/yourusername/yourrepository.git
 
 
 ## 项目结构
-##### 项目目录结构:
 
 ```
-├─.pio		(组件库)
-│  ├─build			(编译生成文件)
-│  ├─libdeps		(项目所依赖的所有库文件)
-├─.vscode			(vscode配置文件)
-├─include			(暂时没有用到：项目需要的头文件)
-├─lib				(个人开发的程序库 )
-│  ├─mqtt			(mqtt库)
-│  ├─led			(led库)
-│  ├─servo			(servo库)
-├─src				(源文件目录)
+├─.pio		    (组件库)
+│  ├─build		(编译生成文件)
+│  ├─libdeps	(项目所依赖的所有库文件)
+├─.vscode		(vscode配置文件)
+├─include		(暂时没有用到：项目需要的头文件)
+├─lib			(个人开发的程序库 )
+│  ├─mqtt		(mqtt库)
+│  ├─led		(led库)
+│  ├─servo		(servo库)
+├─src			(源文件目录)
 
 ```
 
