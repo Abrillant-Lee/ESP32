@@ -2,7 +2,7 @@
 
 <div align="center">
   <p>
-    <strong>本仓库是我对ESP32-S3的开发经验总结，希望对你有所帮助</strong><br>
+    <strong>本仓库是个人对ESP32-S3的开发经验总结，希望对你有所帮助</strong><br>
 
 
   </p>
@@ -25,9 +25,23 @@ git clone https://github.com/yourusername/yourrepository.git
 
 
 ## 项目结构
-- src/: 这个文件夹包含项目的源代码
-- lib/: 这个文件夹包含项目的库文件
-- test/: 这个文件夹包含项目的测试代码
+##### 项目目录结构:
+
+```
+├─.pio		(组件库)
+│  ├─build			(编译生成文件)
+│  ├─libdeps		(项目所依赖的所有库文件)
+├─.vscode			(vscode配置文件)
+├─include			(暂时没有用到：项目需要的头文件)
+├─lib				(个人开发的程序库 )
+│  ├─mqtt			(mqtt库)
+│  ├─led			(led库)
+│  ├─servo			(servo库)
+├─src				(源文件目录)
+
+```
+
+```
 
 ## 贡献
  如果你想为这个项目做出贡献，欢迎提交Pull Request。
