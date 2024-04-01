@@ -12,5 +12,5 @@ void loop()
 {
     Device_Report_value(i);
     i = i + 1;
-    delay(2000);
+    delay(10000);
 }
