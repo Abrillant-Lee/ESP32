@@ -1,3 +1,17 @@
+/**
+ * @file mqtt.h
+ * @brief 这个头文件包含了MQTT客户端的声明和一些全局变量的声明。
+ *
+ * 这个文件包含了以下内容：
+ * - 引入了一些必要的库文件，包括Arduino、Wire、WiFi、PubSubClient和ArduinoJson库。
+ * - 引入了自定义的led和bsp_servo头文件。
+ * - 声明了一些全局变量，包括WiFi的SSID和密码、MQTT服务器的地址和端口、MQTT客户端的ID、用户名和密码、MQTT的主题、舵机对象和舵机位置变量。
+ * - 声明了一些函数，包括初始化MQTT客户端的函数、订阅命令主题的函数、处理MQTT消息的回调函数、发送MQTT消息的函数、执行LedCtr命令的函数和上报设备属性值的函数。
+ *
+ * @author 李浩楠
+ * @date 2024-4-1
+ */
+
 #include <Arduino.h>
 #include <Wire.h>         //Arduino的库文件
 #include <WiFi.h>         //ESP32的库文件
