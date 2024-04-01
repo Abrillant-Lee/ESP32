@@ -10,7 +10,8 @@ void setup()
 
 void loop()
 {
-    Device_Report_value(i);
-    i = i + 1;
-    delay(10000);
+    const char *properties[] = {"temperature", "humidity", "light_intensity"};
+    int values[] = {25, 60, 1000}; // 这里的值是示例，你需要根据实际情况进行修改
+    Device_Report_value("esp32", properties, values, 3);
+    delay(2000);
 }
