@@ -18,7 +18,7 @@ const char *topic_properties_report = "$oc/devices/6609494b71d845632a033b20_0331
 const char *topic_commands_request = "$oc/devices/6609493b71d845632a033b20_0331/sys/    commands/#";
 /*-----------------------------------------------------*/
 
-WiFiClient espClient; // ESP32WiFi模型定义
+WiFiClient espClient; // ESP32WiFi模型定义MQTT_Init
 PubSubClient client(espClient);
 
 // JSON文档的大小
@@ -26,7 +26,7 @@ const int JSON_DOC_SIZE = 1024;
 // JSON字符串的缓冲区大小
 const int JSON_BUFFER_SIZE = 200;
 
-void MQTT_Init()
+void initMQTTClient()
 {
     // WiFi网络连接部分
     WiFi.begin(ssid, password); // 开启ESP32的WiFi
@@ -59,10 +59,10 @@ void MQTT_Init()
             delay(6000);
         }
     }
-    // client.setCallback(callback); // 可以接受任何平台下发的内容
+    // client.setmqttMessageCallback(mqttMessageCallback); // 可以接受任何平台下发的内容
 
     // 订阅命令下发主题
-    subscribeCommandTopic();
+    subscribeToCommandTopic();
 }
 
 // 发送MQTT消息的函数
@@ -91,7 +91,7 @@ void sendMQTTMessage(const char *topic, const char *message)
 //       properties - 属性名称数组
 //       values - 属性值数组
 //       size - 数组的大小
-void Device_Report_value(const char *service_id, const char **properties, int *values, int size)
+void reportDeviceValues(const char *service_id, const char **properties, int *values, int size)
 {
     DynamicJsonDocument doc(JSON_DOC_SIZE);
 
@@ -115,7 +115,7 @@ void Device_Report_value(const char *service_id, const char **properties, int *v
     sendMQTTMessage(topic_properties_report, JSONmessageBuffer);
 }
 
-void subscribeCommandTopic()
+void subscribeToCommandTopic()
 {
     if (client.subscribe(topic_commands_request))
     {
@@ -129,7 +129,7 @@ void subscribeCommandTopic()
     }
 
     // 设置回调函数，当接收到命令请求时，会调用这个函数
-    client.setCallback(callback);
+    client.setmqttMessageCallback(mqttMessageCallback);
 }
 
 // 定义一个函数，用于打印消息
@@ -155,8 +155,8 @@ bool publishResponse(const char *topic, const char *response)
 }
 
 // 定义一个回调函数，这个函数会在ESP32从MQTT服务器接收到消息时被调用
-// PubSubClient库会自动调用callback函数，并传入消息的主题、内容和长度作为参数。
-void callback(char *topic, byte *payload, unsigned int length)
+// PubSubClient库会自动调用mqttMessageCallback函数，并传入消息的主题、内容和长度作为参数。
+void mqttMessageCallback(char *topic, byte *payload, unsigned int length)
 {
     printMessage("主题中收到的消息: ", topic); // 打印主题中收到的消息
 
@@ -197,7 +197,7 @@ void callback(char *topic, byte *payload, unsigned int length)
     if (strcmp(command_name, "led_ctr") == 0)
     {
         JsonObject paras = doc["paras"].as<JsonObject>(); // 获取"paras"字段
-        execute_LedCtr_Command(paras);                      // 执行led_ctr命令
+        executeLedControlCommand(paras);                      // 执行led_ctr命令
     }
 
     // 创建响应消息
@@ -214,7 +214,7 @@ void callback(char *topic, byte *payload, unsigned int length)
 }
 
 // 定义一个函数，用于执行led_ctr命令
-void execute_LedCtr_Command(const JsonObject &paras)
+void executeLedControlCommand(const JsonObject &paras)
 {
     Led led(48);
     servo_setup(47);
