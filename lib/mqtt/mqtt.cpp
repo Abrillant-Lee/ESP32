@@ -241,73 +241,75 @@ bool publishResponse(const char *topic, const char *response)
  */
 void mqttMessageCallback(char *topic, byte *payload, unsigned int length)
 {
-
-    Serial.println("-------------");
-    printMessage("接收到华为云平台的命令下发消息: ", topic); // 打印主题中收到的消息
-
-    char *request_id_start = strstr(topic, "request_id="); // 在主题中查找"request_id="
-    printMessage("请求ID_start: ", request_id_start);      // 打印请求ID
-    if (request_id_start == NULL)
-    {                                          // 如果没有找到
-        printMessage("请求ID未找到: ", topic); // 打印错误消息
-        return;                                // 返回
-    }
-
-    const char *request_id = request_id_start + 11; // 获取request_id
-    printMessage("请求ID: ", request_id);           // 打印请求ID
-
-    printMessage("平台下发命令:", ""); // 打印平台下发的命令
-    for (int i = 0; i < length; i++)
-    {                                   // 遍历命令的每一个字符
-        Serial.print((char)payload[i]); // 打印字符
-    }
-    Serial.println(); // 打印换行符
-
-    // 将payload转换为字符串
-    String payloadStr = String((char *)payload);
-
-    // 创建一个JsonDocument对象，用于存储解析的JSON数据
-    DynamicJsonDocument doc(200);
-
-    // 解析JSON数据
-    DeserializationError error = deserializeJson(doc, payloadStr);
-    if (error)
     {
-        Serial.print(F("deserializeJson() failed: "));
-        Serial.println(error.f_str());
-        return;
-    }
 
-    // 检查"command_name"字段是否为"led_ctr"
-    const char *command_name = doc["command_name"];
-    if (strcmp(command_name, "led_ctr") == 0)
-    {
-        JsonObject paras = doc["paras"].as<JsonObject>(); // 获取"paras"字段
-        executeLedControlCommand(paras);                  // 执行led_ctr命令
-    }
-    else if (strcmp(command_name, "dht11_ctr") == 0)
-    {
-        JsonObject paras = doc["paras"].as<JsonObject>(); // 获取"paras"字段
-        executeDht11ControlCommand(paras);                // 执行led_ctr命令
-    }
-    else if (strcmp(command_name, "air_conditioner") == 0)
-    {
-        JsonObject paras = doc["paras"].as<JsonObject>(); // 获取"paras"字段
-        executeAirConditionerControlCommand(paras);       // 执行led_ctr命令
-    }
+        Serial.println("-------------");
+        printMessage("接收到华为云平台的命令下发消息: ", topic); // 打印主题中收到的消息
 
-    printMessage("请求ID: ", request_id); // 打印请求ID
+        char *request_id_start = strstr(topic, "request_id="); // 在主题中查找"request_id="
+        printMessage("请求ID_start: ", request_id_start);      // 打印请求ID
+        if (request_id_start == NULL)
+        {                                          // 如果没有找到
+            printMessage("请求ID未找到: ", topic); // 打印错误消息
+            return;                                // 返回
+        }
 
-    // 创建响应消息
-    doc["result_code"] = 0;
-    doc["result_desc"] = "OK";
-    char response[200];
-    serializeJson(doc, response);
+        const char *request_id = request_id_start + 11; // 获取request_id
+        printMessage("请求ID: ", request_id);           // 打印请求ID
 
-    char topic_commands_response[200]; // 定义一个数组，用于存储命令应答主题
-    // 使用snprintf函数，将格式化的字符串写入topic_commands_response
-    snprintf(topic_commands_response, sizeof(topic_commands_response), "$oc/devices/6609494b71d845632a033b20_0331/sys/commands/response/request_id=%s", request_id);
-    publishResponse(topic_commands_response, response); // 发布响应
+        printMessage("平台下发命令:", ""); // 打印平台下发的命令
+        for (int i = 0; i < length; i++)
+        {                                   // 遍历命令的每一个字符
+            Serial.print((char)payload[i]); // 打印字符
+        }
+        Serial.println(); // 打印换行符
+
+        // 将payload转换为字符串
+        String payloadStr = String((char *)payload);
+
+        // 创建一个JsonDocument对象，用于存储解析的JSON数据
+        DynamicJsonDocument doc(200);
+
+        // 解析JSON数据
+        DeserializationError error = deserializeJson(doc, payloadStr);
+        if (error)
+        {
+            Serial.print(F("deserializeJson() failed: "));
+            Serial.println(error.f_str());
+            return;
+        }
+
+        // 检查"command_name"字段是否为"led_ctr"
+        const char *command_name = doc["command_name"];
+        if (strcmp(command_name, "led_ctr") == 0)
+        {
+            JsonObject paras = doc["paras"].as<JsonObject>(); // 获取"paras"字段
+            executeLedControlCommand(paras);                  // 执行led_ctr命令
+        }
+        else if (strcmp(command_name, "dht11_ctr") == 0)
+        {
+            JsonObject paras = doc["paras"].as<JsonObject>(); // 获取"paras"字段
+            executeDht11ControlCommand(paras);                // 执行led_ctr命令
+        }
+        else if (strcmp(command_name, "air_conditioner") == 0)
+        {
+            JsonObject paras = doc["paras"].as<JsonObject>(); // 获取"paras"字段
+            executeAirConditionerControlCommand(paras);       // 执行led_ctr命令
+        }
+
+        printMessage("请求ID: ", request_id); // 打印请求ID
+
+        // 创建响应消息
+        doc["result_code"] = 0;
+        doc["result_desc"] = "OK";
+        char response[200];
+        serializeJson(doc, response);
+
+        char topic_commands_response[200]; // 定义一个数组，用于存储命令应答主题
+        // 使用snprintf函数，将格式化的字符串写入topic_commands_response
+        snprintf(topic_commands_response, sizeof(topic_commands_response), "$oc/devices/6609494b71d845632a033b20_0331/sys/commands/response/request_id=%s", request_id);
+        publishResponse(topic_commands_response, response); // 发布响应
+    }
 }
 
 /**
