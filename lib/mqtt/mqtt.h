@@ -23,6 +23,9 @@
 #include "led.h"
 #include "bsp_servo.h"
 #include "infrared.h"
+#include "relay.h"
+
+#define RELAY_PIN 5 //继电器IO口
 
 extern const char *ssid;
 extern const char *password;

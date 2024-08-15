@@ -2,28 +2,23 @@
 #include "bsp_servo.h"
 #include "infrared.h"
 #include "flex.h"
-#include "mpu6050.h"
+#include "dht11_owner.h"
 
 extern PubSubClient client;
 
 void setup()
 {
-    // RXPIN 9  TXPIN 10
+    // RXPIN 9  TXPIN 10k
     Serial.begin(115200);
-    Serial1.begin(115200, SERIAL_8N1, 16, 17);
+    Serial1.begin(115200, SERIAL_8N1, 9, 10);
     initMQTTClient();
-    MPU6050_Init();
+    dht.begin();
 }
 
 void loop()
-{
-    // MPU6050_Data();
-    sensors_event_t a, g, temp;
-    mpu.getEvent(&a, &g, &temp);
-
-    const char *properties[] = {"Angle:", "AccelX:", "AccelY:", "AccelZ:", "GyroX:", "GyroY:", "GyroZ:"};
-    int values[] = {getBendAngle(32), a.acceleration.x, a.acceleration.y, a.acceleration.z, g.gyro.x, g.gyro.y, g.gyro.z};
-
-    reportDeviceValues("esp32", properties, values, sizeof(values) / sizeof(values[0]));
-    delay(1000);
+{ // 开始采集数据
+    const char *properties[] = {"must"};
+    int values[] = {1}; // 调用相应的函数来获取温度和湿度的值
+    reportDeviceValues("智控终端", properties, values, 1);
+    delay(3000);
 }

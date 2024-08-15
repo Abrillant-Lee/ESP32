@@ -19,22 +19,32 @@
 
 #include <DHT.h>
 
-/*MQTT连接配置*/
-/*-----------------------------------------------------*/
 const char *ssid = "nan";                                                            // 接入wifi的名字
 const char *password = "20021113";                                                   // 接入wifi的密码
 const char *mqttServer = "92e10cb0f7.st1.iotda-device.cn-north-4.myhuaweicloud.com"; // 在华为云IoT的 总览->接入信息->MQTT（1883）后面的网址
 const int mqttPort = 1883;
-// 以下3个参数可以由HMACSHA256算法生成，为硬件通过MQTT协议接入华为云IoT平台的鉴权依据
-const char *clientId = "6609494b71d845632a033b20_0331_0_0_2024033111";
-const char *mqttUser = "6609494b71d845632a033b20_0331";
-const char *mqttPassword = "8c03c225082feea540f65591dfbbad4cdeed779cca02ac072e3547098358fca7";
 
-// 华为云IoT的产品->查看->Topic管理->设备上报属性数据的 $oc/devices/{你的设备ID}/sys/properties/report
-const char *topic_properties_report = "$oc/devices/6609494b71d845632a033b20_0331/sys/properties/report";
+/*-----------------------------------------------------*/
+// // 以下3个参数可以由HMACSHA256算法生成，为硬件通过MQTT协议接入华为云IoT平台的鉴权依据
+// const char *clientId = "6609494b71d845632a033b20_kongtiao_0_0_2024071915";
+// const char *mqttUser = "6609494b71d845632a033b20_kongtiao";
+// const char *mqttPassword = "c3e35fc861ebcd4272e80ac2c03760f72eb2683ab46274deff4821320a42ae35";
+// // 华为云IoT的产品->查看->Topic管理->设备上报属性数据的 $oc/devices/{你的设备ID}/sys/properties/report
+// const char *topic_properties_report = "$oc/devices/6609494b71d845632a033b20_kongtiao/sys/properties/report";
+// // 订阅命令下发主题
+// const char *topic_commands_request = "$oc/devices/6609494b71d845632a033b20_kongtiao/sys/commands/#";
+/*-----------------------------------------------------*/
 
-// 订阅命令下发主题
-const char *topic_commands_request = "$oc/devices/6609493b71d845632a033b20_0331/sys/commands/#";
+/*-------------------灯带-继电器配置参数---------------------------------*/
+// {
+//     "device_id": "66bc6576d8c5af5f58f28751_0002",
+//     "secret": "9fe57fe2a9c2a6788a4a23c6ad04a4d6"
+// }
+const char *clientId = "66bc6576d8c5af5f58f28751_0002_0_0_2024081516";
+const char *mqttUser = "66bc6576d8c5af5f58f28751_0002";
+const char *mqttPassword = "905dd784784e21cd69d070cf5349fe25c5dae052489d11f075485bec1ebd8867";
+const char *topic_properties_report = "$oc/devices/66bc6576d8c5af5f58f28751_0002/sys/properties/report";
+const char *topic_commands_request = "$oc/devices/66bc6576d8c5af5f58f28751_0002/sys/commands/#";
 /*-----------------------------------------------------*/
 
 WiFiClient espClient; // ESP32WiFi模型定义MQTT_Init
@@ -281,16 +291,12 @@ void mqttMessageCallback(char *topic, byte *payload, unsigned int length)
 
         // 检查"command_name"字段是否为"led_ctr"
         const char *command_name = doc["command_name"];
-        if (strcmp(command_name, "led_ctr") == 0)
+        if (strcmp(command_name, "led") == 0)
         {
             JsonObject paras = doc["paras"].as<JsonObject>(); // 获取"paras"字段
             executeLedControlCommand(paras);                  // 执行led_ctr命令
         }
-        else if (strcmp(command_name, "dht11_ctr") == 0)
-        {
-            JsonObject paras = doc["paras"].as<JsonObject>(); // 获取"paras"字段
-            executeDht11ControlCommand(paras);                // 执行led_ctr命令
-        }
+    
         else if (strcmp(command_name, "air_conditioner") == 0)
         {
             JsonObject paras = doc["paras"].as<JsonObject>(); // 获取"paras"字段
@@ -321,49 +327,22 @@ void mqttMessageCallback(char *topic, byte *payload, unsigned int length)
  */
 void executeLedControlCommand(const JsonObject &paras)
 {
-    Led led(48);
-    servo_setup(47);
-
-    int value = paras["value"]; // 从"paras"字段中获取"value"字段，将其解析为一个整数
-    if (value)
+    Serial.println("执行LED控制命令");
+    const char *ctr = paras["ctr"];
+    Relay relay(RELAY_PIN);
+    relay.begin();
+    if (strcmp(ctr, "ON") == 0)
     {
-        led.on();
-        myservo.write(180); // 告诉舵机去到pos位置
+        Serial.println("打开LED");
+        relay.on();
     }
-    else
+    else if (strcmp(ctr, "OFF") == 0)
     {
-        led.off();
-        myservo.write(10); // 0的话舵机内部会有问题
+        Serial.println("关闭LED");
+        relay.off();
     }
 }
 
-// void executeDht11ControlCommand(const JsonObject &paras)
-// {
-//     int value = paras["value"]; // 从"paras"字段中获取"value"字段，将其解析为一个整数
-//     if (value)
-//     {
-//         dht11_ctr = 1;
-
-//         // 开始采集数据
-//         DHT dht(2, DHT11);
-//         dht.begin();
-
-//         const char *properties[] = {"temperature", "humidity"};
-
-//         // 当dht11_ctr为1时，持续采集数据并上报
-//         while (dht11_ctr)
-//         {
-//             int values[] = {dht.readHumidity(), dht.readTemperature()}; // 调用相应的函数来获取温度和湿度的值
-//             reportDeviceValues("esp32", properties, values, 2);
-//             delay(2000);
-//         }
-//     }
-//     else
-//     {
-//         // 停止采集数据
-//         dht11_ctr = 0;
-//     }
-// }
 void executeDht11ControlCommand(const JsonObject &paras)
 {
     int value = paras["value"]; // 从"paras"字段中获取"value"字段，将其解析为一个整数
